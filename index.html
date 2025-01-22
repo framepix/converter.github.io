@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image to SVG Converter</title>
-    <script src="https://cdn.jsdelivr.net/npm/potrace-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer.js"></script>
 </head>
 <body>
     <h2>Convert PNG or JPG to SVG</h2>
@@ -16,7 +16,7 @@
     <div id="svgPreview"></div>
 
     <script>
-        async function convertToSVG() {
+        function convertToSVG() {
             const fileInput = document.getElementById('imageInput');
             if (fileInput.files.length === 0) {
                 alert('Please select an image file.');
@@ -28,7 +28,7 @@
 
             reader.onload = function(event) {
                 const img = new Image();
-                img.crossOrigin = 'Anonymous'; // Avoid CORS issues
+                img.crossOrigin = 'Anonymous';
                 img.src = event.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
@@ -37,9 +37,9 @@
                     canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
                     
-                    // Convert canvas to data URL
-                    const imageData = canvas.toDataURL('image/png');
-                    Potrace.process(imageData, function(svg) {
+                    // Convert canvas to image data
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    ImageTracer.imageDataToSVG(imageData, function(svg) {
                         document.getElementById('svgOutput').value = svg;
                         document.getElementById('svgPreview').innerHTML = svg;
                     });
